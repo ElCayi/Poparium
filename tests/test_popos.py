@@ -7,11 +7,17 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from keepstate import (LOGO_CYCLE, backups_to_keep, fit_figures, month_grid, TEXT_FIELDS, tmux_status, Drafts, Store, logo_frame, commit_graph, from_markdown, load_popo, popo_look, growth, png_bytes, scale_rgba, stamp,
-                       to_markdown, version_diff)
+from popos.dates import month_grid, stamp
+from popos.document import TEXT_FIELDS, from_markdown, to_markdown, version_diff
+from popos.drafts import Drafts
+from popos.history import commit_graph
+from popos.popo import LOGO_CYCLE, growth, load_popo, logo_frame, png_bytes, popo_look, scale_rgba
+from popos.store import Store, backups_to_keep
+from popos.tmux import tmux_status
+from popos.ui.draw import fit_figures
 
 
-class KeepstateStoreTest(unittest.TestCase):
+class PoposTest(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
         self.db_path = Path(self.folder.name) / 'store.db'

@@ -8,11 +8,11 @@ else
   py="nix shell nixpkgs#python3 -c python3"
 fi
 if [[ -n "${TMUX:-}" && $py == python3 ]]; then
-  exec -a popos python3 keepstate.py  # tmux names the tab after the process: popos
+  exec -a popos python3 -m popos  # tmux names the tab after the process: popos
 elif [[ -n "${TMUX:-}" ]]; then
-  exec $py keepstate.py
+  exec $py -m popos
 elif command -v tmux >/dev/null 2>&1; then
-  exec tmux new-session -A -s popos "$py '$PWD/keepstate.py'"
+  exec tmux new-session -A -s popos -c "$PWD" "$PWD/run.sh"
 else
-  exec $py keepstate.py
+  exec $py -m popos
 fi

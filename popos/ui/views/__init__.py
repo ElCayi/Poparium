@@ -1,0 +1,1 @@
+"""One view per tab."""

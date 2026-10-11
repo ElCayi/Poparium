@@ -13,7 +13,7 @@ nix profile add ~/Projects/popos   # una vez; para actualizar: nix profile upgra
 popos
 ```
 
-Sin instalar nada, desde la carpeta del proyecto: `./run.sh`.
+Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (o `python3 -m popos`).
 
 - Si ya estás dentro de una sesión tmux, la app se abre en el panel actual.
 - Si tmux está instalado pero no estás dentro, crea (o recupera) la sesión `popos`.
@@ -203,6 +203,28 @@ popos --export
 ```
 
 También puedes elegir otra base de datos con `--db /ruta/privada.db` o mediante la variable `POPOS_DB`.
+
+## Cómo está hecho
+
+Python con la biblioteca estándar (curses y sqlite3), sin dependencias. El paquete `popos/`:
+
+| Módulo | Qué contiene |
+|---|---|
+| `cli.py`, `__main__.py` | El comando `popos` (`python -m popos`) |
+| `store.py` | La libreta: SQLite, sus migraciones y las copias diarias |
+| `document.py` | Un acuerdo como documento: título, nota y texto libre; los diffs entre versiones |
+| `history.py` | Versiones y revisiones como commits: hashes y el grafo |
+| `vocabulary.py` | Las palabras de la app: experiencias, estados, lo que dice Popo |
+| `dates.py` | Fechas en UTC, cómo se leen, la cuadrícula del mes |
+| `popo.py`, `kitty.py` | Popo (dibujos, crecimiento, animación) y el protocolo gráfico de kitty |
+| `tmux.py` | La cara de Popo en la barra de estado y la pestaña cian |
+| `drafts.py`, `editor.py` | Los borradores y el editor externo (nvim) |
+| `ui/app.py` | La app: estado, bucle principal y teclas |
+| `ui/actions.py`, `ui/reader.py` | Lo que hacen las teclas, y la lectura de un acuerdo y su historial |
+| `ui/draw.py`, `ui/dialogs.py`, `ui/layout.py` | Colores, cajas, diálogos, tamaños y barras de teclas |
+| `ui/views/` | Una vista por pestaña: barra lateral, acuerdos, calendario, bitácora, review, poparium |
+
+Los dibujos de Popo están en `assets/popo-src/`; `tools/popo_assets.py` los convierte en `popos/assets/popo.json`. Los tests: `python -m unittest discover -s tests`.
 
 ## Qué no es
 

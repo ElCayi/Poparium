@@ -9,7 +9,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
       src = nixpkgs.lib.fileset.toSource {
         root = ./.;
-        fileset = nixpkgs.lib.fileset.unions [ ./keepstate.py ./tests ./assets/popo.json ];
+        fileset = nixpkgs.lib.fileset.unions [ ./popos ./tests ];
       };
     in
     {
@@ -20,12 +20,12 @@
           # version than the running server can't talk to it
           text = ''
             py=${pkgs.python3}/bin/python3
-            app=${src}/keepstate.py
+            export PYTHONPATH=${src}
             # With arguments (--export, --db ...) or already inside tmux: run here.
             # exec -a: the process is called popos, not python3, and that is the
             # name tmux gives its tab
             if [[ $# -gt 0 || -n "''${TMUX:-}" ]] || ! command -v tmux >/dev/null; then
-              exec -a popos "$py" "$app" "$@"
+              exec -a popos "$py" -m popos "$@"
             fi
             # Inside the new session TMUX is set, so this same script runs the app
             exec tmux new-session -A -s popos "$0"

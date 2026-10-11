@@ -22,7 +22,7 @@ import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "assets" / "popo-src"
-OUT = ROOT / "assets" / "popo.json"
+OUT = ROOT / "popos" / "assets" / "popo.json"
 SIZE = 32
 # The small Popo above the name: the original idle frames shrunk to exactly
 # 1/4 (each pixel is a whole 4x4 block of the original), so it stays crisp.
