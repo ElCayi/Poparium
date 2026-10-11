@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from keepstate import (LOGO_CYCLE, fit_figures, month_grid, TEXT_FIELDS, tmux_status, Drafts, Store, logo_frame, commit_graph, from_markdown, load_popo, popo_look, growth, png_bytes, scale_rgba, stamp,
+from keepstate import (LOGO_CYCLE, backups_to_keep, fit_figures, month_grid, TEXT_FIELDS, tmux_status, Drafts, Store, logo_frame, commit_graph, from_markdown, load_popo, popo_look, growth, png_bytes, scale_rgba, stamp,
                        to_markdown, version_diff)
 
 
@@ -323,6 +323,30 @@ class KeepstateStoreTest(unittest.TestCase):
         self.assertEqual([c[2] for c in fit_figures(figures, 90)[0]], ['ACUERDOS', 'EXPERIENCIAS', 'DESCUBRIMIENTOS', 'INTEGRADOS'])
         self.assertEqual([c[2] for c in fit_figures(figures, 40)[0]], ['ACU', 'EXP', 'DESC', 'INT'])
         self.assertEqual(len(fit_figures(figures, 20)), 2)
+
+    def test_daily_backups_are_private_and_pruned(self):
+        self.assertIsNone(self.store.daily_backup())  # nothing to copy yet
+        self.store.create('Avisar', 'Coordinarnos')
+        today = dt.date(2026, 10, 11)
+        first = self.store.daily_backup(today)
+        self.assertEqual(first.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(first.parent.stat().st_mode & 0o777, 0o700)
+        self.assertEqual(sqlite3.connect(first).execute('SELECT title FROM commitments').fetchone(), ('Avisar',))
+        self.assertEqual(self.store.daily_backup(today), first)  # once a day
+        for days in range(1, 400):
+            self.store.daily_backup(today + dt.timedelta(days=days))
+        kept = sorted(first.parent.glob('*.db'))
+        self.assertLessEqual(len(kept), 14 + 12)
+        self.assertTrue(any('2027-11-14' in f.name for f in kept))  # the newest
+
+    def test_backups_keep_two_weeks_and_a_year_of_months(self):
+        today = dt.date(2026, 10, 11)
+        dates = {today - dt.timedelta(days=n) for n in range(500)}
+        keep = backups_to_keep(dates, today)
+        self.assertTrue({today - dt.timedelta(days=n) for n in range(14)} <= keep)
+        self.assertNotIn(today - dt.timedelta(days=20), keep)
+        months = {(d.year, d.month) for d in keep}
+        self.assertEqual(len(months), 12)
 
 
 if __name__ == '__main__':

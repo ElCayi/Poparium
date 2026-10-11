@@ -453,6 +453,21 @@ def tmux_status(db_path):
         return "(^ᴗ^)"
 
 
+# Daily copies of the notebook: every day of the last two weeks, and the first
+# copy of each month for a year
+KEEP_DAILY, KEEP_MONTHLY = 14, 12
+
+
+def backups_to_keep(dates, today):
+    """Which of these backup dates stay."""
+    keep = {d for d in dates if 0 <= (today - d).days < KEEP_DAILY}
+    first_of_month = {}
+    for d in sorted(dates):
+        first_of_month.setdefault((d.year, d.month), d)
+    keep |= {first_of_month[m] for m in sorted(first_of_month)[-KEEP_MONTHLY:]}
+    return keep
+
+
 class Store:
     def __init__(self, path=DEFAULT_DB):
         self.path = Path(path).expanduser()
@@ -535,10 +550,39 @@ class Store:
         """A private copy of the whole notebook next to it, before changing its format."""
         target = self.path.with_name(f"{self.path.stem}.{tag}.db")
         if not target.exists():
-            fd = os.open(target, os.O_CREAT | os.O_WRONLY, 0o600)
-            os.close(fd)
-            with sqlite3.connect(target) as copy:
-                self.db.backup(copy)
+            self._copy_to(target)
+        return target
+
+    def _copy_to(self, target):
+        """SQLite's online backup: a consistent copy even while the notebook is open. 0600."""
+        fd = os.open(target, os.O_CREAT | os.O_WRONLY, 0o600)
+        os.close(fd)
+        copy = sqlite3.connect(target)
+        try:
+            self.db.backup(copy)
+        finally:
+            copy.close()
+
+    def daily_backup(self, today=None):
+        """Once a day, a copy in <notebook>.backups/ (private); old ones are pruned
+        (backups_to_keep). An empty notebook has nothing worth copying."""
+        if not self.db.execute("SELECT COUNT(*) FROM commitments").fetchone()[0]:
+            return None
+        today = today or dt.date.today()
+        folder = self.path.with_name(self.path.stem + ".backups")
+        folder.mkdir(mode=0o700, exist_ok=True)
+        folder.chmod(0o700)
+        target = folder / f"{self.path.stem}-{today.isoformat()}.db"
+        if not target.exists():
+            self._copy_to(target)
+        dated = {}
+        for f in folder.glob(f"{self.path.stem}-*.db"):
+            try:
+                dated[dt.date.fromisoformat(f.stem[len(self.path.stem) + 1:])] = f
+            except ValueError:
+                continue
+        for d in set(dated) - backups_to_keep(set(dated), today):
+            dated[d].unlink()
         return target
 
     def _snapshot(self, identifier, note, when):
@@ -2416,6 +2460,7 @@ def main():
         elif not sys.stdin.isatty() or not sys.stdout.isatty():
             parser.error("la interfaz necesita una terminal interactiva (dentro de tmux funciona)")
         else:
+            store.daily_backup()
             curses.wrapper(App(store).run)
     finally:
         store.close()

@@ -192,7 +192,9 @@ La base de datos se guarda en:
 
 (La carpeta conserva el nombre con el que nació la app, keepstate.)
 
-Se crea con permisos de archivo `0600`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
+Se crea con permisos de archivo `0600`.
+
+**Copias de seguridad:** cada día que se abre la app se guarda una copia (la copia en caliente de SQLite, consistente aunque la libreta esté abierta) en `~/.local/share/keepstate/keepstate.backups/`, solo legible por tu usuario. Se conservan las de las **últimas dos semanas** y **la primera de cada mes durante un año**. Para recuperar una, con la app cerrada, se copia encima de `keepstate.db`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
 
 Exportar desde la app con `m` o desde la terminal:
 
