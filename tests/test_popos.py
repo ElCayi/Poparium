@@ -12,7 +12,7 @@ from popos.document import TEXT_FIELDS, from_markdown, to_markdown, version_diff
 from popos.drafts import Drafts
 from popos.history import commit_graph
 from popos.popo import LOGO_CYCLE, growth, load_popo, logo_frame, png_bytes, popo_look, scale_rgba
-from popos.store import Store, backups_to_keep
+from popos.store import Store, adopt_legacy_folder, backups_to_keep
 from popos.tmux import tmux_status
 from popos.ui.draw import fit_figures
 
@@ -353,6 +353,31 @@ class PoposTest(unittest.TestCase):
         self.assertNotIn(today - dt.timedelta(days=20), keep)
         months = {(d.year, d.month) for d in keep}
         self.assertEqual(len(months), 12)
+
+    def test_keepstate_folder_becomes_popos(self):
+        root = Path(self.folder.name)
+        old, new = root / 'keepstate', root / 'popos'
+        (old / 'keepstate.backups').mkdir(parents=True)
+        (old / 'keepstate.drafts').mkdir()
+        for name in ['keepstate.db', 'keepstate.pre-0.3.db', 'keepstate.backups/keepstate-2026-10-11.db',
+                     'keepstate.drafts/nuevo.md']:
+            (old / name).write_text(name)
+        self.assertEqual(adopt_legacy_folder(new, old), new / 'popos.db')
+        self.assertFalse(old.exists())
+        self.assertEqual((new / 'popos.db').read_text(), 'keepstate.db')
+        self.assertTrue((new / 'popos.pre-0.3.db').exists())
+        self.assertTrue((new / 'popos.backups' / 'popos-2026-10-11.db').exists())
+        self.assertTrue((new / 'popos.drafts' / 'nuevo.md').exists())
+        self.assertEqual(adopt_legacy_folder(new, old), new / 'popos.db')  # nothing left to do
+
+    def test_keepstate_folder_mid_write_stays_put(self):
+        root = Path(self.folder.name)
+        old, new = root / 'keepstate', root / 'popos'
+        old.mkdir()
+        (old / 'keepstate.db').write_text('db')
+        (old / 'keepstate.db-journal').write_text('journal')
+        self.assertEqual(adopt_legacy_folder(new, old), old / 'keepstate.db')
+        self.assertFalse(new.exists())
 
 
 if __name__ == '__main__':

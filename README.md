@@ -77,13 +77,13 @@ Hay **dos niveles de lectura**:
 - **La ficha**, en ACUERDOS: la nota, las experiencias y Popo.
 - **El acuerdo entero**, con `ENTER`: el título, la nota destacada y el texto, con scroll.
 
-Las libretas de antes de la 0.3 tenían secciones fijas (WHY, CONTEXT, COMMITMENT…). Al abrirlas, COMMITMENT pasa a ser la nota y las demás pasan al texto libre, cada una bajo su título; las columnas antiguas se conservan y antes se guarda una copia (`keepstate.pre-0.3.db`).
+Las libretas de antes de la 0.3 tenían secciones fijas (WHY, CONTEXT, COMMITMENT…). Al abrirlas, COMMITMENT pasa a ser la nota y las demás pasan al texto libre, cada una bajo su título; las columnas antiguas se conservan y antes se guarda una copia (`popos.pre-0.3.db`).
 
 ### Historial de versiones
 
 Cada edición guardada es una versión nueva (`v1.0`, `v1.1`…) con una nota de qué cambió y por qué. `V` muestra todas las versiones, cada una con un diff de lo que cambió respecto a la anterior. Las versiones aparecen también como commits en la pestaña REVIEW. Las conclusiones anteriores siguen pudiéndose consultar, pero nunca dejan de poder revisarse.
 
-Al abrir una libreta creada con una versión anterior de la app, la app añade las secciones nuevas (vacías) y guarda antes una copia de seguridad, `keepstate.pre-0.2.db`, junto a la base de datos.
+Al abrir una libreta creada con una versión anterior de la app, la app añade las secciones nuevas (vacías) y guarda antes una copia de seguridad, `popos.pre-0.2.db`, junto a la base de datos.
 
 ## Revisiones como commits
 
@@ -115,7 +115,7 @@ Cada entrada de la bitácora y cada revisión guardan además la **versión del 
 
 Todo lo que ya se ha guardado (acuerdos, avances, revisiones, versiones) se escribe en la base de datos en el mismo momento, así que cerrar la app, el panel de tmux o la terminal no lo pierde.
 
-Lo que está **a medio escribir** se guarda como borrador en una carpeta privada junto a la libreta (`keepstate.drafts/`, solo legible por tu usuario). Cada borrador se borra solo cuando su contenido ya está en la libreta:
+Lo que está **a medio escribir** se guarda como borrador en una carpeta privada junto a la libreta (`popos.drafts/`, solo legible por tu usuario). Cada borrador se borra solo cuando su contenido ya está en la libreta:
 
 - **En el editor:** mientras escribes en nvim o vim, cada cambio se copia aparte sin tocar tu archivo, así que `:q!` sigue sin guardar nada. Si todo se cierra de golpe, al volver a pulsar `N` (o `E` en ese acuerdo) se abre lo que estabas escribiendo.
 - **Entre el editor y la libreta:** una edición ya guardada en el editor pero sin nota de versión sigue en su borrador hasta que la versión existe.
@@ -187,14 +187,14 @@ Recarga con `tmux source-file ~/.tmux.conf` y abre la app con **Prefijo + K**. P
 La base de datos se guarda en:
 
 ```text
-~/.local/share/keepstate/keepstate.db
+~/.local/share/popos/popos.db
 ```
 
-(La carpeta conserva el nombre con el que nació la app, keepstate.)
+(Cuando la app se llamaba keepstate, la libreta vivía en `~/.local/share/keepstate/keepstate.db`. La primera vez que se abre popOS, la carpeta entera se mueve a la nueva ruta y sus archivos pasan a llamarse `popos.*`, copias incluidas. Con `POPOS_DB` o `--db` se puede usar otra libreta.)
 
 Se crea con permisos de archivo `0600`.
 
-**Copias de seguridad:** cada día que se abre la app se guarda una copia (la copia en caliente de SQLite, consistente aunque la libreta esté abierta) en `~/.local/share/keepstate/keepstate.backups/`, solo legible por tu usuario. Se conservan las de las **últimas dos semanas** y **la primera de cada mes durante un año**. Para recuperar una, con la app cerrada, se copia encima de `keepstate.db`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
+**Copias de seguridad:** cada día que se abre la app se guarda una copia (la copia en caliente de SQLite, consistente aunque la libreta esté abierta) en `~/.local/share/popos/popos.backups/`, solo legible por tu usuario. Se conservan las de las **últimas dos semanas** y **la primera de cada mes durante un año**. Para recuperar una, con la app cerrada, se copia encima de `popos.db`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
 
 Exportar desde la app con `m` o desde la terminal:
 

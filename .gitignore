@@ -4,6 +4,6 @@ __pycache__/
 # nix build
 result
 result-*
-# The notebook itself never lives here (~/.local/share/keepstate/), but just in case
+# The notebook itself never lives here (~/.local/share/popos/), but just in case
 *.db
 *.drafts/

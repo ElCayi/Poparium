@@ -10,10 +10,39 @@ from popos.document import LEGACY_COLUMNS, TEXT_FIELDS, glance, legacy_document
 from popos.history import init_hash, review_hash, version_hash, version_label
 
 
-# The notebook keeps the folder it was born in (the app was called keepstate);
-# POPOS_DB, or the older KEEPSTATE_DB, points to another one
-DEFAULT_DB = Path(os.environ.get("POPOS_DB") or os.environ.get("KEEPSTATE_DB")
-                  or "~/.local/share/keepstate/keepstate.db").expanduser()
+# POPOS_DB points to another notebook
+DATA_DIR = Path("~/.local/share/popos").expanduser()
+DEFAULT_DB = Path(os.environ.get("POPOS_DB") or DATA_DIR / "popos.db").expanduser()
+# Where the notebook lived while the app was called keepstate
+LEGACY_DIR, LEGACY_STEM = Path("~/.local/share/keepstate").expanduser(), "keepstate"
+
+
+def adopt_legacy_folder(new=DATA_DIR, old=LEGACY_DIR):
+    """Moves the keepstate folder to popos/ and renames what's inside
+    (keepstate.db, .backups, .drafts, .pre-0.x.db) to popos.*.
+
+    The folder moves in one rename, and the renames inside are repeated on
+    every start until none is left, so an interruption at any point loses
+    nothing. Left alone while the old notebook is mid-write (a -journal or
+    -wal next to it): the app then opens it where it is, untouched.
+    """
+    if not new.exists() and old.is_dir():
+        if any(old.glob(f"{LEGACY_STEM}.db-*")):
+            return old / f"{LEGACY_STEM}.db"
+        old.rename(new)
+    if not new.is_dir():
+        return new / "popos.db"
+    for f in new.glob(f"{LEGACY_STEM}.*"):
+        target = new / ("popos" + f.name[len(LEGACY_STEM):])
+        if not target.exists():
+            f.rename(target)
+    backups = new / "popos.backups"
+    if backups.is_dir():
+        for f in backups.glob(f"{LEGACY_STEM}-*.db"):
+            target = backups / ("popos" + f.name[len(LEGACY_STEM):])
+            if not target.exists():
+                f.rename(target)
+    return new / "popos.db"
 
 
 # Daily copies of the notebook: every day of the last two weeks, and the first
