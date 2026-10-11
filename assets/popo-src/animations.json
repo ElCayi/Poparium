@@ -1,0 +1,64 @@
+{
+  "name": "Popo / KEEPSTATE",
+  "source": "PoPo definitive 8-pose reference sheet",
+  "logical_frame_size": [
+    64,
+    64
+  ],
+  "pixel_scale_preview": 4,
+  "fps_nominal": 6.67,
+  "frame_duration_ms": 150,
+  "loop": "infinite",
+  "background_preview": "#101820",
+  "states": {
+    "idle": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-idle.gif",
+      "apng": "popo-idle.png",
+      "sprite_strip": "popo-idle-strip.png"
+    },
+    "hello": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-hello.gif",
+      "apng": "popo-hello.png",
+      "sprite_strip": "popo-hello-strip.png"
+    },
+    "think": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-think.gif",
+      "apng": "popo-think.png",
+      "sprite_strip": "popo-think-strip.png"
+    },
+    "coding": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-coding.gif",
+      "apng": "popo-coding.png",
+      "sprite_strip": "popo-coding-strip.png"
+    },
+    "reading": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-reading.gif",
+      "apng": "popo-reading.png",
+      "sprite_strip": "popo-reading-strip.png"
+    },
+    "sleep": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-sleep.gif",
+      "apng": "popo-sleep.png",
+      "sprite_strip": "popo-sleep-strip.png"
+    },
+    "comfort": {
+      "frames": 16,
+      "loop": true,
+      "gif": "popo-comfort.gif",
+      "apng": "popo-comfort.png",
+      "sprite_strip": "popo-comfort-strip.png"
+    }
+  }
+}

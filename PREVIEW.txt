@@ -1,0 +1,23 @@
+  popOS v0.1               │ // Memoria persistente entre sesiones. 🐾
+  personal runtime / 0.1  │ ─────────────────────────────────────────────────────
+                            │ ACTIVE  02      LOGGED WINS  08      OBSTACLES  02
+  ▸ 01  OVERVIEW           │ Últimos 7 días · Cada obstáculo es información
+    02  ACUERDOS           │ ─────────────────────────────────────────────────────
+    03  BITÁCORA           │ FOCUS  /  Mis acuerdos activos
+    04  REVIEW             │
+                            │ ▸ #002 Consultar esta libreta antes de discutir
+                            │   #001 Mantener la rutina semanal
+                            │ ─────────────────────────────────────────────────────
+                            │ SELECTED / Consultar esta libreta antes de discutir
+                            │
+                            │ WHY / Recuperar los acuerdos sin empezar desde cero
+                            │ NEXT ACTION / Leer la nota acordada y hacer una pausa
+                            │ TRIGGER / Cuando detecte la misma discusión
+                            │ SUCCESS / Puedo explicar la conclusión anterior
+  offline / personal       │ RECOVERY / Si no lo recuerdo, abrir la nota y retomarlo
+  sqlite / sin nube        │
+  ? ayuda   q salir        │ Datos locales y privados. Nadie supervisa tus avances.
+─────────────────────────────────────────────────────────────────────────────────────
+ 1-4 pestañas · ↑↓ mover · N nuevo · D hecho · P avance · B obstáculo · R retro · Q salir
+
+Vista orientativa. La aplicación se dibuja en vivo y usa color en terminales compatibles.
