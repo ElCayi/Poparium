@@ -6,7 +6,7 @@ import os
 import sys
 from popos import APP, TAGLINE, VERSION
 from popos.store import DEFAULT_DB, Store, adopt_legacy_folder
-from popos.tmux import tmux_status
+from popos.tmux import push_status, tmux_status, unsaved_drafts
 from popos.ui.app import App
 
 
@@ -16,10 +16,16 @@ def main():
     parser.add_argument("--export", action="store_true", help="Exportar Markdown y salir")
     parser.add_argument("--tmux-status", action="store_true",
                         help="Imprimir la cara de Popo para la barra de estado de tmux y salir")
+    parser.add_argument("--tmux-status-push", action="store_true",
+                        help="Escribir la cara de Popo en la opción @popos-status de tmux y salir")
     args = parser.parse_args()
     if args.tmux_status:
         # Runs every few seconds: it never moves the old folder, it only reads
         print(tmux_status(args.db or DEFAULT_DB))
+        return
+    if args.tmux_status_push:
+        # Once when the tmux server starts: the app keeps it current from then on
+        push_status(unsaved_drafts(args.db or DEFAULT_DB))
         return
     if not args.db:
         args.db = DEFAULT_DB if "POPOS_DB" in os.environ else adopt_legacy_folder()

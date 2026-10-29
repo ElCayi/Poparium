@@ -13,7 +13,7 @@ from popos.drafts import Drafts
 from popos.history import commit_graph
 from popos.popo import LOGO_CYCLE, growth, load_popo, logo_frame, png_bytes, popo_look, scale_rgba
 from popos.store import Store, adopt_legacy_folder, backups_to_keep
-from popos.tmux import tmux_status
+from popos.tmux import push_status, tmux_status
 from popos.ui.draw import fit_figures
 
 
@@ -202,6 +202,38 @@ class PoposTest(unittest.TestCase):
         self.assertNotIn('Secreto', tmux_status(self.db_path))
         Drafts(Path(self.folder.name) / 'store.drafts').write('nuevo', 'a medias')
         self.assertTrue(tmux_status(self.db_path).endswith('✎'))
+
+    def test_drafts_report_only_unsaved_documents(self):
+        seen = []
+        drafts = Drafts(Path(self.folder.name) / 'store.drafts', on_change=seen.append)
+        drafts.write('campo', 'a medias', '.txt')
+        drafts.write('nuevo', 'a medias')
+        drafts.autosave_path('nuevo').write_text('más')
+        drafts.drop_autosave('nuevo')
+        drafts.discard('nuevo')
+        drafts.discard('campo', '.txt')
+        self.assertEqual(seen, [False, True, True, False])
+
+    def test_push_status_sets_the_tmux_option(self):
+        bin_dir = Path(self.folder.name) / 'bin'
+        bin_dir.mkdir()
+        log = Path(self.folder.name) / 'tmux.log'
+        fake = bin_dir / 'tmux'
+        fake.write_text(f'#!/bin/sh\nprintf "%s|" "$@" >> {log}\n')
+        fake.chmod(0o755)
+        old_path = os.environ['PATH']
+        os.environ['PATH'] = str(bin_dir)
+        try:
+            push_status(True)
+            push_status(False)
+        finally:
+            os.environ['PATH'] = old_path
+        self.assertEqual(log.read_text(), 'set|-gq|@popos-status|(^ᴗ^) ✎|set|-gq|@popos-status|(^ᴗ^)|')
+        os.environ['PATH'] = ''
+        try:
+            push_status(True)  # no tmux at all: nothing happens, nothing fails
+        finally:
+            os.environ['PATH'] = old_path
 
     def test_old_sections_become_free_text_once(self):
         old = Path(self.folder.name) / 'old.db'

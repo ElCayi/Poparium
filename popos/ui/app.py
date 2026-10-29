@@ -8,7 +8,7 @@ from popos import APP, VERSION
 from popos.drafts import Drafts
 from popos.kitty import KITTY_LOGO_IDS, farm_image_id, kitty_escape, kitty_graphics, kitty_upload
 from popos.popo import load_popo, logo_frame, popo_png
-from popos.tmux import tmux_tab
+from popos.tmux import push_status, tmux_tab
 from popos.ui.draw import box, put, setup_colors, style
 from popos.ui.layout import CALENDAR_INSIDE_HINTS, JOURNAL_LIMIT, KEY_HINTS, MAX_W, MENU_HINTS, MIN_H, MIN_W, SIDEBAR_W, TABS
 from popos.ui.actions import ActionsMixin
@@ -31,7 +31,7 @@ class App(ActionsMixin, ReaderMixin, SidebarView, AgreementsView, CalendarView, 
         self.selected = 0
         self.message = "Datos locales y privados. Nadie supervisa tus avances."
         self.archive = False
-        self.drafts = Drafts(store.path.with_name(store.path.stem + ".drafts"))
+        self.drafts = Drafts(store.path.with_name(store.path.stem + ".drafts"), on_change=push_status)
         waiting = self.describe_drafts()
         if waiting:
             self.message = "✎ Borradores sin guardar: " + waiting + ". Se recuperan al abrirlos otra vez."

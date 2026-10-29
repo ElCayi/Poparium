@@ -180,7 +180,15 @@ Por ejemplo, un atajo en `~/.tmux.conf` que abra popOS flotando encima de lo que
 bind-key K display-popup -E -w 80% -h 85% "popos"
 ```
 
-Recarga con `tmux source-file ~/.tmux.conf` y abre la app con **Prefijo + K**. Para ver a Popo en la barra de estado de tmux: `set -ga status-right "#(popos --tmux-status)"` (solo su cara, nunca títulos).
+Recarga con `tmux source-file ~/.tmux.conf` y abre la app con **Prefijo + K**. Para ver a Popo en la barra de estado de tmux (solo su cara, nunca títulos):
+
+```tmux
+set -g @popos-status "(^ᴗ^)"
+set -ga status-right "#{@popos-status}"
+run-shell -b "popos --tmux-status-push >/dev/null 2>&1 || true"
+```
+
+popOS escribe la opción `@popos-status` cada vez que cambian los borradores (con `✎` mientras quede alguno sin guardar), así que tmux no tiene que ejecutar nada cada pocos segundos. El `run-shell` la pone al día una vez al arrancar el servidor, por si quedaban borradores de antes. Si prefieres que tmux pregunte, `#(popos --tmux-status)` sigue funcionando.
 
 ## Datos y privacidad
 
