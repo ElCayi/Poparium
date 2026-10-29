@@ -4,7 +4,7 @@ Una **bitácora de acuerdos, aprendizajes y progreso** de estética terminal, pa
 
 ## Iniciar
 
-Necesitas Python 3 y un terminal UTF-8 de **al menos 50 columnas × 20 filas**; con menos de 86 columnas la barra lateral se pliega en una fila de pestañas. `curses` y `sqlite3` vienen con Python en Linux. No hay dependencias de `pip`.
+Es un único binario sin dependencias en tiempo de ejecución (SQLite va dentro) y necesita un terminal UTF-8 de **al menos 50 columnas × 20 filas**; con menos de 86 columnas la barra lateral se pliega en una fila de pestañas.
 
 Con Nix, se instala como el comando `popos` y se abre escribiéndolo:
 
@@ -13,12 +13,12 @@ nix profile add ~/Projects/popos   # una vez; para actualizar: nix profile upgra
 popos
 ```
 
-Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (o `python3 -m popos`).
+Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (lo compila con `cargo` la primera vez; luego, `target/release/popos`).
 
 - Si ya estás dentro de una sesión tmux, la app se abre en el panel actual.
 - Si tmux está instalado pero no estás dentro, crea (o recupera) la sesión `popos`.
 - Si no tienes tmux, se abre en tu terminal habitual.
-- En NixOS, si falta Python o tmux: `nix shell nixpkgs#python3 nixpkgs#tmux` y luego `./run.sh`.
+- En NixOS, si falta `cargo`, `./run.sh` lo trae con nix al compilar; si falta tmux: `nix shell nixpkgs#tmux`.
 
 ## Pestañas y teclas
 
@@ -214,25 +214,29 @@ También puedes elegir otra base de datos con `--db /ruta/privada.db` o mediante
 
 ## Cómo está hecho
 
-Python con la biblioteca estándar (curses y sqlite3), sin dependencias. El paquete `popos/`:
+Rust, con un binario pequeño que arranca en unos milisegundos: `rusqlite` (SQLite incluido), `crossterm` para el terminal y poco más. El código, en `src/`:
 
 | Módulo | Qué contiene |
 |---|---|
-| `cli.py`, `__main__.py` | El comando `popos` (`python -m popos`) |
-| `store.py` | La libreta: SQLite, sus migraciones y las copias diarias |
-| `document.py` | Un acuerdo como documento: título, nota y texto libre; los diffs entre versiones |
-| `history.py` | Versiones y revisiones como commits: hashes y el grafo |
-| `vocabulary.py` | Las palabras de la app: experiencias, estados, lo que dice Popo |
-| `dates.py` | Fechas en UTC, cómo se leen, la cuadrícula del mes |
-| `popo.py`, `kitty.py` | Popo (dibujos, crecimiento, animación) y el protocolo gráfico de kitty |
-| `tmux.py` | La cara de Popo en la barra de estado y la pestaña cian |
-| `drafts.py`, `editor.py` | Los borradores y el editor externo (nvim) |
-| `ui/app.py` | La app: estado, bucle principal y teclas |
-| `ui/actions.py`, `ui/reader.py` | Lo que hacen las teclas, y la lectura de un acuerdo y su historial |
-| `ui/draw.py`, `ui/dialogs.py`, `ui/layout.py` | Colores, cajas, diálogos, tamaños y barras de teclas |
+| `main.rs` | El comando `popos`: sus opciones y la sesión tmux propia |
+| `store.rs` | La libreta: SQLite, sus migraciones y las copias diarias |
+| `document.rs` | Un acuerdo como documento: título, nota y texto libre; los diffs entre versiones |
+| `history.rs` | Versiones y revisiones como commits: hashes y el grafo |
+| `vocabulary.rs` | Las palabras de la app: experiencias, estados, lo que dice Popo |
+| `dates.rs` | Fechas en UTC, cómo se leen, la cuadrícula del mes |
+| `popo.rs`, `kitty.rs` | Popo (dibujos, crecimiento, animación) y el protocolo gráfico de kitty |
+| `tmux.rs` | La cara de Popo en la barra de estado y la pestaña cian |
+| `drafts.rs`, `editor.rs` | Los borradores y el editor externo (nvim) |
+| `pytext.rs`, `pyrandom.rs` | Lo que la app heredó de Python y conserva igual: cómo se parten las líneas, los diffs, el azar del prado |
+| `ui/term.rs` | El terminal: una cuadrícula de celdas que solo envía lo que cambia |
+| `ui/app.rs` | La app: estado, bucle principal y teclas |
+| `ui/actions.rs`, `ui/reader.rs` | Lo que hacen las teclas, y la lectura de un acuerdo y su historial |
+| `ui/draw.rs`, `ui/dialogs.rs`, `ui/layout.rs` | Colores, cajas, diálogos, tamaños y barras de teclas |
 | `ui/views/` | Una vista por pestaña: barra lateral, acuerdos, calendario, bitácora, review, poparium |
 
-Los dibujos de Popo están en `assets/popo-src/`; `tools/popo_assets.py` los convierte en `popos/assets/popo.json`. Los tests: `python -m unittest discover -s tests`.
+Los dibujos de Popo están en `assets/popo-src/`; `tools/popo_assets.py` los convierte en `assets/popo.json`, que va dentro del binario. Los tests: `cargo test`. Los que comparan con Python (`textwrap`, `difflib`, `random`) se lanzan aparte: `python3 tests/python_cases.py > cases.json` y `POPOS_PYCASES=cases.json cargo test -- --ignored`.
+
+La versión anterior, en Python, vive en el historial de git: la libreta es la misma y las dos la leen igual.
 
 ## Qué no es
 

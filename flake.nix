@@ -9,36 +9,30 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
       src = nixpkgs.lib.fileset.toSource {
         root = ./.;
-        fileset = nixpkgs.lib.fileset.unions [ ./popos ./tests ];
+        fileset = nixpkgs.lib.fileset.unions [ ./Cargo.toml ./Cargo.lock ./src ./assets/popo.json ];
+      };
+      popos = pkgs: pkgs.rustPlatform.buildRustPackage {
+        pname = "popos";
+        version = "0.1.0";
+        inherit src;
+        cargoLock.lockFile = ./Cargo.lock;
+        # tmux is taken from the user's PATH on purpose: a different tmux
+        # version than the running server can't talk to it. Without arguments
+        # and outside tmux, the binary opens (or picks up) its own `popos` session.
+        meta.mainProgram = "popos";
       };
     in
     {
-      packages = forAllSystems (pkgs: {
-        default = pkgs.writeShellApplication {
-          name = "popos";
-          # tmux is taken from the user's PATH on purpose: a different tmux
-          # version than the running server can't talk to it
-          text = ''
-            py=${pkgs.python3}/bin/python3
-            export PYTHONPATH=${src}
-            # With arguments (--export, --db ...) or already inside tmux: run here.
-            # exec -a: the process is called popos, not python3, and that is the
-            # name tmux gives its tab
-            if [[ $# -gt 0 || -n "''${TMUX:-}" ]] || ! command -v tmux >/dev/null; then
-              exec -a popos "$py" -m popos "$@"
-            fi
-            # Inside the new session TMUX is set, so this same script runs the app
-            exec tmux new-session -A -s popos "$0"
-          '';
-        };
-      });
+      packages = forAllSystems (pkgs: { default = popos pkgs; });
 
-      checks = forAllSystems (pkgs: {
-        tests = pkgs.runCommand "popos-tests" { } ''
-          cd ${src}
-          HOME=$TMPDIR PYTHONDONTWRITEBYTECODE=1 ${pkgs.python3}/bin/python3 -m unittest discover -s tests -v
-          touch $out
-        '';
+      # The tests run as part of the build (cargo test in checkPhase)
+      checks = forAllSystems (pkgs: { tests = popos pkgs; });
+
+      # The toolchain only; the dependencies come from Cargo.lock
+      devShells = forAllSystems (pkgs: {
+        default = pkgs.mkShell {
+          packages = with pkgs; [ cargo rustc clippy rustfmt rust-analyzer ];
+        };
       });
     };
 }

@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
+# popOS from the project folder, built if needed. Outside tmux the binary opens
+# (or picks up) its own `popos` session; inside, it opens in the current pane.
 set -euo pipefail
 cd "$(dirname "$0")"
-if command -v python3 >/dev/null 2>&1; then
-  py="python3"
+if command -v cargo >/dev/null 2>&1; then
+  cargo build --release --locked --quiet
 else
-  # NixOS sin python3 en el PATH: lo trae nix al vuelo
-  py="nix shell nixpkgs#python3 -c python3"
+  # NixOS sin cargo en el PATH: lo trae nix al vuelo
+  nix shell nixpkgs#cargo nixpkgs#rustc nixpkgs#gcc -c cargo build --release --locked --quiet
 fi
-if [[ -n "${TMUX:-}" && $py == python3 ]]; then
-  exec -a popos python3 -m popos  # tmux names the tab after the process: popos
-elif [[ -n "${TMUX:-}" ]]; then
-  exec $py -m popos
-elif command -v tmux >/dev/null 2>&1; then
-  exec tmux new-session -A -s popos -c "$PWD" "$PWD/run.sh"
-else
-  exec $py -m popos
-fi
+exec target/release/popos "$@"

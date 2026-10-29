@@ -1,6 +1,7 @@
-# Python
+# Python (tools/, tests/python_cases.py)
 __pycache__/
-*.pyc
+# cargo build
+/target
 # nix build
 result
 result-*
