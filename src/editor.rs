@@ -103,14 +103,14 @@ fn lua_string(text: &str) -> String {
     serde_json::to_string(text).expect("a string serializes")
 }
 
-/// A Lua file for nvim, only for popOS documents: a fixed help bar on top and
+/// A Lua file for nvim, only for Poparium documents: a fixed help bar on top and
 /// Ctrl+G, a list of suggested sections to insert (buffer-local, so the
 /// user's own nvim is untouched).
 fn nvim_helpers(folder: &Path) -> PathBuf {
     let items: Vec<String> =
         SUGGESTIONS.iter().map(|(name, question)| format!("{{{}, {}}}", lua_string(name), lua_string(question))).collect();
     let lua = format!(
-        r###"vim.opt_local.winbar = " popOS · escribe libre bajo la raya ── · Ctrl+G sección sugerida · ZZ guardar · ZQ salir sin guardar"
+        r###"vim.opt_local.winbar = " Poparium · escribe libre bajo la raya ── · Ctrl+G sección sugerida · ZZ guardar · ZQ salir sin guardar"
 local items = {{ {items} }}
 local function insert(choice)
   if not choice then return end
@@ -123,12 +123,12 @@ local function pick()
   vim.ui.select(items, {{prompt = "Sección sugerida (ESC: ninguna)",
     format_item = function(i) return i[1] .. " · " .. i[2] end}}, insert)
 end
-vim.keymap.set("n", "<C-g>", pick, {{buffer = true, desc = "popOS: sección sugerida"}})
+vim.keymap.set("n", "<C-g>", pick, {{buffer = true, desc = "Poparium: sección sugerida"}})
 vim.keymap.set("i", "<C-g>", function() vim.cmd("stopinsert"); vim.schedule(pick) end, {{buffer = true}})
 "###,
         items = items.join(", ")
     );
-    let path = folder.join("popos-nvim.lua");
+    let path = folder.join("poparium-nvim.lua");
     if let Ok(mut file) = OpenOptions::new().create(true).write(true).truncate(true).mode(0o600).open(&path) {
         let _ = file.write_all(lua.as_bytes());
     }

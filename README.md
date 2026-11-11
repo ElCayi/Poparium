@@ -1,22 +1,22 @@
-# popOS v0.1 · Personal Operating System
+# Poparium v0.1 · Personal Operating System
 
 Una **bitácora de acuerdos, aprendizajes y progreso** de estética terminal, para usar dentro de **tmux**. Sin cuenta, sin nube y sin nadie más mirando.
 
 ## Iniciar
 
-Es un único binario sin dependencias en tiempo de ejecución (SQLite va dentro) y necesita un terminal UTF-8 de **al menos 50 columnas × 20 filas**; con menos de 86 columnas la barra lateral se pliega en una fila de pestañas.
+Es un único binario sin dependencias en tiempo de ejecución (SQLite va dentro) y necesita un terminal UTF-8 de **al menos 50 columnas × 20 filas**; con menos de 92 columnas la barra lateral se pliega en una fila de pestañas.
 
-Con Nix, se instala como el comando `popos` y se abre escribiéndolo:
+Con Nix, se instala como el comando `poparium` y se abre escribiéndolo:
 
 ```bash
-nix profile add ~/Projects/popos   # una vez; para actualizar: nix profile upgrade popos
-popos
+nix profile add ~/Projects/poparium   # una vez; para actualizar: nix profile upgrade poparium
+poparium
 ```
 
-Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (lo compila con `cargo` la primera vez; luego, `target/release/popos`).
+Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (lo compila con `cargo` la primera vez; luego, `target/release/poparium`).
 
 - Si ya estás dentro de una sesión tmux, la app se abre en el panel actual.
-- Si tmux está instalado pero no estás dentro, crea (o recupera) la sesión `popos`.
+- Si tmux está instalado pero no estás dentro, crea (o recupera) la sesión `poparium`.
 - Si no tienes tmux, se abre en tu terminal habitual.
 - En NixOS, si falta `cargo`, `./run.sh` lo trae con nix al compilar; si falta tmux: `nix shell nixpkgs#tmux`.
 
@@ -24,7 +24,7 @@ Sin instalar nada, desde la carpeta del proyecto: `./run.sh` (lo compila con `ca
 
 | Tecla | Acción |
 |---|---|
-| `←` `→`, `TAB` o `1` a `6` | Cambiar de pestaña: inicio, acuerdos, calendario, bitácora, retrospectivas, poparium |
+| `←` `→`, `TAB` o `1` a `6` | Cambiar de pestaña: inicio, acuerdos, calendario, bitácora, retrospectivas, prado |
 | `↑` `↓` | Elegir un acuerdo de la lista; en BITÁCORA, una entrada |
 | `ENTER` | Leer el acuerdo entero |
 | `n` | Nuevo acuerdo, en tu editor |
@@ -68,22 +68,22 @@ Si acepto preparar la comida, la priorizo o aviso si me retraso.
 
 - La **nota** es lo que se ve de un vistazo en la ficha. La escribe él; la app nunca la genera. Si se borra la sección, el acuerdo no tiene nota y la ficha muestra en gris el principio del texto.
 - Bajo la raya, **texto libre** en Markdown: dos líneas o cinco páginas.
-- En nvim, **`Ctrl+G`** ofrece **secciones sugeridas** para cuando ayuda tener una pregunta delante: *Por qué me importa* (la primera, porque los motivos son lo que evita volver a discutir lo decidido), *Contexto*, *Impacto*, *Perspectivas*, *Conclusiones*, *Compromiso*, *Límites y excepciones*, *Desencadenantes*, *Comprobación* y *Recuperación*. Una vez insertada, es Markdown normal: se puede renombrar, mover o borrar. Arriba, una barra fija recuerda las teclas (`ZZ` guardar, `ZQ` salir sin guardar). El atajo solo existe en los documentos de popOS; tu nvim normal no cambia.
+- En nvim, **`Ctrl+G`** ofrece **secciones sugeridas** para cuando ayuda tener una pregunta delante: *Por qué me importa* (la primera, porque los motivos son lo que evita volver a discutir lo decidido), *Contexto*, *Impacto*, *Perspectivas*, *Conclusiones*, *Compromiso*, *Límites y excepciones*, *Desencadenantes*, *Comprobación* y *Recuperación*. Una vez insertada, es Markdown normal: se puede renombrar, mover o borrar. Arriba, una barra fija recuerda las teclas (`ZZ` guardar, `ZQ` salir sin guardar). El atajo solo existe en los documentos de Poparium; tu nvim normal no cambia.
 
-Al guardar y salir (`:wq` o `ZZ`) vuelves a popOS; si sales sin guardar (`:q!` o `ZQ`), no cambia nada.
+Al guardar y salir (`:wq` o `ZZ`) vuelves a Poparium; si sales sin guardar (`:q!` o `ZQ`), no cambia nada.
 
 Hay **dos niveles de lectura**:
 
 - **La ficha**, en ACUERDOS: la nota, las experiencias y Popo.
 - **El acuerdo entero**, con `ENTER`: el título, la nota destacada y el texto, con scroll.
 
-Las libretas de antes de la 0.3 tenían secciones fijas (WHY, CONTEXT, COMMITMENT…). Al abrirlas, COMMITMENT pasa a ser la nota y las demás pasan al texto libre, cada una bajo su título; las columnas antiguas se conservan y antes se guarda una copia (`popos.pre-0.3.db`).
+Las libretas de antes de la 0.3 tenían secciones fijas (WHY, CONTEXT, COMMITMENT…). Al abrirlas, COMMITMENT pasa a ser la nota y las demás pasan al texto libre, cada una bajo su título; las columnas antiguas se conservan y antes se guarda una copia (`poparium.pre-0.3.db`).
 
 ### Historial de versiones
 
 Cada edición guardada es una versión nueva (`v1.0`, `v1.1`…) con una nota de qué cambió y por qué. `V` muestra todas las versiones, cada una con un diff de lo que cambió respecto a la anterior. Las versiones aparecen también como commits en la pestaña REVIEW. Las conclusiones anteriores siguen pudiéndose consultar, pero nunca dejan de poder revisarse.
 
-Al abrir una libreta creada con una versión anterior de la app, la app añade las secciones nuevas (vacías) y guarda antes una copia de seguridad, `popos.pre-0.2.db`, junto a la base de datos.
+Al abrir una libreta creada con una versión anterior de la app, la app añade las secciones nuevas (vacías) y guarda antes una copia de seguridad, `poparium.pre-0.2.db`, junto a la base de datos.
 
 ## Revisiones como commits
 
@@ -105,7 +105,7 @@ El hash son 7 caracteres de un SHA-1 del contenido de la revisión. No cambia nu
 
 La pestaña **03 CALENDARIO** muestra el mes como una cuadrícula. Cada día lleva un punto por cada tipo de cosa que pasó: **logro** (D, P), **obstáculo** (B), **aprendizaje** (I, R) y **cambio** (un acuerdo nuevo o una versión). Al lado, o debajo si la ventana es estrecha, está todo lo del día elegido.
 
-En la pestaña, `←` `→` siguen cambiando de pestaña como en todas. **`ENTER` entra en el calendario** (su borde se ilumina): entonces `←` `→` `↑` `↓` se mueven por los días, `[` y `]` cambian de mes y `T` vuelve a hoy. **`ESC`** (o `ENTER` otra vez, o cambiar de pestaña) sale. Un día sin puntos es un día tranquilo, nunca un día en rojo: popOS es una memoria, no una agenda, y no avisa ni reclama nada.
+En la pestaña, `←` `→` siguen cambiando de pestaña como en todas. **`ENTER` entra en el calendario** (su borde se ilumina): entonces `←` `→` `↑` `↓` se mueven por los días, `[` y `]` cambian de mes y `T` vuelve a hoy. **`ESC`** (o `ENTER` otra vez, o cambiar de pestaña) sale. Un día sin puntos es un día tranquilo, nunca un día en rojo: Poparium es una memoria, no una agenda, y no avisa ni reclama nada.
 
 ## La versión de cada experiencia
 
@@ -115,7 +115,7 @@ Cada entrada de la bitácora y cada revisión guardan además la **versión del 
 
 Todo lo que ya se ha guardado (acuerdos, avances, revisiones, versiones) se escribe en la base de datos en el mismo momento, así que cerrar la app, el panel de tmux o la terminal no lo pierde.
 
-Lo que está **a medio escribir** se guarda como borrador en una carpeta privada junto a la libreta (`popos.drafts/`, solo legible por tu usuario). Cada borrador se borra solo cuando su contenido ya está en la libreta:
+Lo que está **a medio escribir** se guarda como borrador en una carpeta privada junto a la libreta (`poparium.drafts/`, solo legible por tu usuario). Cada borrador se borra solo cuando su contenido ya está en la libreta:
 
 - **En el editor:** mientras escribes en nvim o vim, cada cambio se copia aparte sin tocar tu archivo, así que `:q!` sigue sin guardar nada. Si todo se cierra de golpe, al volver a pulsar `N` (o `E` en ese acuerdo) se abre lo que estabas escribiendo.
 - **Entre el editor y la libreta:** una edición ya guardada en el editor pero sin nota de versión sigue en su borrador hasta que la versión existe.
@@ -145,7 +145,7 @@ La portada (**01 OVERVIEW**) muestra los totales desde el principio (un compromi
 
 ## Popo
 
-Hay un Popo por acuerdo: en su ficha y en la pestaña **06 POPARIUM**, donde andan a su aire. Popo **siempre está contento** de acompañar: lo que hace no reacciona al último registro (tres obstáculos seguidos no lo ponen triste, un logro no lo hace más orgulloso). Lo que cambia es su **barriguita**, que crece con las experiencias (3, 8, 15 y 25), y el **estirón** que pega cuando el acuerdo pasa a integrado. Los archivados duermen.
+Hay un Popo por acuerdo: en su ficha y en la pestaña **06 PRADO**, donde andan a su aire. Popo **siempre está contento** de acompañar: lo que hace no reacciona al último registro (tres obstáculos seguidos no lo ponen triste, un logro no lo hace más orgulloso). Lo que cambia es su **barriguita**, que crece con las experiencias (3, 8, 15 y 25), y el **estirón** que pega cuando el acuerdo pasa a integrado. Los archivados duermen.
 
 En kitty, el Popo de la ficha es el dibujo real, que la app ensancha o estira según crece; en otras terminales, su versión de bloques. Las animaciones solo se mueven mientras están en pantalla y apenas gastan CPU.
 
@@ -174,43 +174,43 @@ La bitácora conserva **aciertos, avances, obstáculos y aprendizajes**. Una ret
 
 Un cuaderno no puede resolver por sí solo el problema de acordarse de abrirlo. Asociarlo a un disparador externo (alarma del móvil, inicio de una sesión tmux o después de una rutina ya consolidada) puede ayudar. La clave es que sea un hábito autónomo, no una obligación de otra persona recordárselo.
 
-Por ejemplo, un atajo en `~/.tmux.conf` que abra popOS flotando encima de lo que se esté haciendo:
+Por ejemplo, un atajo en `~/.tmux.conf` que abra Poparium flotando encima de lo que se esté haciendo:
 
 ```tmux
-bind-key K display-popup -E -w 80% -h 85% "popos"
+bind-key K display-popup -E -w 80% -h 85% "poparium"
 ```
 
 Recarga con `tmux source-file ~/.tmux.conf` y abre la app con **Prefijo + K**. Para ver a Popo en la barra de estado de tmux (solo su cara, nunca títulos):
 
 ```tmux
-set -g @popos-status "(^ᴗ^)"
-set -ga status-right "#{@popos-status}"
-run-shell -b "popos --tmux-status-push >/dev/null 2>&1 || true"
+set -g @poparium-status "(^ᴗ^)"
+set -ga status-right "#{@poparium-status}"
+run-shell -b "poparium --tmux-status-push >/dev/null 2>&1 || true"
 ```
 
-popOS escribe la opción `@popos-status` cada vez que cambian los borradores (con `✎` mientras quede alguno sin guardar), así que tmux no tiene que ejecutar nada cada pocos segundos. El `run-shell` la pone al día una vez al arrancar el servidor, por si quedaban borradores de antes. Si prefieres que tmux pregunte, `#(popos --tmux-status)` sigue funcionando.
+Poparium escribe la opción `@poparium-status` cada vez que cambian los borradores (con `✎` mientras quede alguno sin guardar), así que tmux no tiene que ejecutar nada cada pocos segundos. El `run-shell` la pone al día una vez al arrancar el servidor, por si quedaban borradores de antes. Si prefieres que tmux pregunte, `#(poparium --tmux-status)` sigue funcionando.
 
 ## Datos y privacidad
 
 La base de datos se guarda en:
 
 ```text
-~/.local/share/popos/popos.db
+~/.local/share/poparium/poparium.db
 ```
 
-(Cuando la app se llamaba keepstate, la libreta vivía en `~/.local/share/keepstate/keepstate.db`. La primera vez que se abre popOS, la carpeta entera se mueve a la nueva ruta y sus archivos pasan a llamarse `popos.*`, copias incluidas. Con `POPOS_DB` o `--db` se puede usar otra libreta.)
+(Antes la app se llamó popOS y, antes aún, keepstate; la libreta vivía en `~/.local/share/popos/popos.db` o `~/.local/share/keepstate/keepstate.db`. La primera vez que se abre Poparium, la carpeta entera se mueve a la nueva ruta y sus archivos pasan a llamarse `poparium.*`, copias incluidas. Con `POPARIUM_DB` o `--db` se puede usar otra libreta.)
 
 Se crea con permisos de archivo `0600`.
 
-**Copias de seguridad:** cada día que se abre la app se guarda una copia (la copia en caliente de SQLite, consistente aunque la libreta esté abierta) en `~/.local/share/popos/popos.backups/`, solo legible por tu usuario. Se conservan las de las **últimas dos semanas** y **la primera de cada mes durante un año**. Para recuperar una, con la app cerrada, se copia encima de `popos.db`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
+**Copias de seguridad:** cada día que se abre la app se guarda una copia (la copia en caliente de SQLite, consistente aunque la libreta esté abierta) en `~/.local/share/poparium/poparium.backups/`, solo legible por tu usuario. Se conservan las de las **últimas dos semanas** y **la primera de cada mes durante un año**. Para recuperar una, con la app cerrada, se copia encima de `poparium.db`. Los datos **no se envían por red**. En ordenadores compartidos, la privacidad efectiva depende también de la cuenta de usuario y los permisos del directorio.
 
 Exportar desde la app con `m` o desde la terminal:
 
 ```bash
-popos --export
+poparium --export
 ```
 
-También puedes elegir otra base de datos con `--db /ruta/privada.db` o mediante la variable `POPOS_DB`.
+También puedes elegir otra base de datos con `--db /ruta/privada.db` o mediante la variable `POPARIUM_DB`.
 
 ## Cómo está hecho
 
@@ -218,7 +218,7 @@ Rust, con un binario pequeño que arranca en unos milisegundos: `rusqlite` (SQLi
 
 | Módulo | Qué contiene |
 |---|---|
-| `main.rs` | El comando `popos`: sus opciones y la sesión tmux propia |
+| `main.rs` | El comando `poparium`: sus opciones y la sesión tmux propia |
 | `store.rs` | La libreta: SQLite, sus migraciones y las copias diarias |
 | `document.rs` | Un acuerdo como documento: título, nota y texto libre; los diffs entre versiones |
 | `history.rs` | Versiones y revisiones como commits: hashes y el grafo |
@@ -232,9 +232,9 @@ Rust, con un binario pequeño que arranca en unos milisegundos: `rusqlite` (SQLi
 | `ui/app.rs` | La app: estado, bucle principal y teclas |
 | `ui/actions.rs`, `ui/reader.rs` | Lo que hacen las teclas, y la lectura de un acuerdo y su historial |
 | `ui/draw.rs`, `ui/dialogs.rs`, `ui/layout.rs` | Colores, cajas, diálogos, tamaños y barras de teclas |
-| `ui/views/` | Una vista por pestaña: barra lateral, acuerdos, calendario, bitácora, review, poparium |
+| `ui/views/` | Una vista por pestaña: barra lateral, acuerdos, calendario, bitácora, review, prado |
 
-Los dibujos de Popo están en `assets/popo-src/`; `tools/popo_assets.py` los convierte en `assets/popo.json`, que va dentro del binario. Los tests: `cargo test`. Los que comparan con Python (`textwrap`, `difflib`, `random`) se lanzan aparte: `python3 tests/python_cases.py > cases.json` y `POPOS_PYCASES=cases.json cargo test -- --ignored`.
+Los dibujos de Popo están en `assets/popo-src/`; `tools/popo_assets.py` los convierte en `assets/popo.json`, que va dentro del binario. Los tests: `cargo test`. Los que comparan con Python (`textwrap`, `difflib`, `random`) se lanzan aparte: `python3 tests/python_cases.py > cases.json` y `POPARIUM_PYCASES=cases.json cargo test -- --ignored`.
 
 La versión anterior, en Python, vive en el historial de git: la libreta es la misma y las dos la leen igual.
 

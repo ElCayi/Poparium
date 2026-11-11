@@ -1,4 +1,4 @@
-  popOS v0.1               │ // Memoria persistente entre sesiones. 🐾
+  Poparium v0.1            │ // Memoria persistente entre sesiones. 🐾
   personal runtime / 0.1  │ ─────────────────────────────────────────────────────
                             │ ACTIVE  02      LOGGED WINS  08      OBSTACLES  02
   ▸ 01  OVERVIEW           │ Últimos 7 días · Cada obstáculo es información

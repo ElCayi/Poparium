@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Turn the Popo sprite strips into assets/popo.json for the POPARIUM tab and the logo.
+"""Turn the Popo sprite strips into assets/popo.json for the PRADO tab and the logo.
 
 Run once after changing the art (needs ImageMagick's `magick`):
 

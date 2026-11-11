@@ -1,4 +1,4 @@
-//! tmux: Popo's face in the status line and the cyan tab while popOS runs.
+//! tmux: Popo's face in the status line and the cyan tab while Poparium runs.
 use std::path::Path;
 use std::process::{Command, Stdio};
 
@@ -37,7 +37,7 @@ fn replace_ignore_case(text: &str, needle: &str, with: &str) -> String {
     out
 }
 
-/// While popOS runs, its tmux tab wears the app's cyan instead of the theme's
+/// While Poparium runs, its tmux tab wears the app's cyan instead of the theme's
 /// accent. Only that window, and only window-level options: unsetting them
 /// (on=false, when the app closes) gives the tab back its usual look.
 pub fn tmux_tab(on: bool) {
@@ -78,9 +78,9 @@ pub fn tmux_tab(on: bool) {
 }
 
 pub const FACE: &str = "(^ᴗ^)";
-/// The tmux option the status line reads with #{@popos-status}. Its default
+/// The tmux option the status line reads with #{@poparium-status}. Its default
 /// (the bare face) is set by the tmux config, not here.
-const STATUS_OPTION: &str = "@popos-status";
+const STATUS_OPTION: &str = "@poparium-status";
 
 /// Popo's face, glad as always, and ✎ while a draft is unsaved. Faces
 /// only, never titles: anyone can see the status line.
@@ -96,13 +96,13 @@ pub fn unsaved_drafts(db_path: &Path) -> bool {
     crate::drafts::has_documents(&path.with_file_name(format!("{stem}.drafts")))
 }
 
-/// One short line for a status bar that polls: `#(popos --tmux-status)`.
+/// One short line for a status bar that polls: `#(poparium --tmux-status)`.
 pub fn tmux_status(db_path: &Path) -> String {
     status_face(unsaved_drafts(db_path))
 }
 
-/// Write the face into the tmux server's @popos-status, so the status line
-/// shows it with #{@popos-status} instead of re-running a command every
+/// Write the face into the tmux server's @poparium-status, so the status line
+/// shows it with #{@poparium-status} instead of re-running a command every
 /// status-interval. With no tmux or no server running, nothing happens: the
 /// face is decoration, never a reason to fail.
 pub fn push_status(unsaved: bool) {
@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn the_status_is_only_a_face() {
-        let dir = std::env::temp_dir().join(format!("popos-status-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("poparium-status-{}", std::process::id()));
         let missing = dir.join("nope.db");
         assert_eq!(tmux_status(&missing), "(^ᴗ^)");
         assert!(!missing.exists());

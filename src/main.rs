@@ -1,4 +1,4 @@
-//! popOS · Personal Operating System: the `popos` command.
+//! Poparium · Personal Operating System: the `poparium` command.
 mod dates;
 mod document;
 mod drafts;
@@ -16,11 +16,11 @@ mod vocabulary;
 use std::io::IsTerminal;
 use std::path::PathBuf;
 
-pub const APP: &str = "popOS";
+pub const APP: &str = "Poparium";
 pub const VERSION: &str = "v0.1";
 pub const TAGLINE: &str = "Personal Operating System";
 
-const USAGE: &str = "usage: popos [-h] [--db DB] [--export] [--tmux-status] [--tmux-status-push]";
+const USAGE: &str = "usage: poparium [-h] [--db DB] [--export] [--tmux-status] [--tmux-status-push]";
 
 fn help() -> String {
     format!(
@@ -30,13 +30,13 @@ fn help() -> String {
          --db DB             Ruta de la base de datos SQLite (por defecto, {})\n  \
          --export            Exportar Markdown y salir\n  \
          --tmux-status       Imprimir la cara de Popo para la barra de estado de tmux y salir\n  \
-         --tmux-status-push  Escribir la cara de Popo en la opción @popos-status de tmux y salir",
+         --tmux-status-push  Escribir la cara de Popo en la opción @poparium-status de tmux y salir",
         store::default_db().display()
     )
 }
 
 fn fail(message: &str) -> ! {
-    eprintln!("{USAGE}\npopos: error: {message}");
+    eprintln!("{USAGE}\npoparium: error: {message}");
     std::process::exit(2);
 }
 
@@ -73,8 +73,8 @@ fn parse_args(raw: &[String]) -> Args {
     args
 }
 
-/// Without arguments and outside tmux, popOS opens in its own tmux session
-/// (`popos`), created or picked up again; inside tmux it opens right there.
+/// Without arguments and outside tmux, Poparium opens in its own tmux session
+/// (`poparium`), created or picked up again; inside tmux it opens right there.
 fn into_tmux_session() {
     use std::os::unix::process::CommandExt;
     if std::env::var("TMUX").is_ok_and(|t| !t.is_empty()) {
@@ -86,8 +86,8 @@ fn into_tmux_session() {
     if !found {
         return;
     }
-    // Only returns if tmux couldn't be started: then popOS opens here
-    let _ = std::process::Command::new("tmux").args(["new-session", "-A", "-s", "popos"]).arg(me).exec();
+    // Only returns if tmux couldn't be started: then Poparium opens here
+    let _ = std::process::Command::new("tmux").args(["new-session", "-A", "-s", "poparium"]).arg(me).exec();
 }
 
 /// With panic = "abort" nothing unwinds: give the terminal back before dying.
@@ -117,16 +117,16 @@ fn main() {
         return;
     }
     let db = args.db.unwrap_or_else(|| {
-        if std::env::var_os("POPOS_DB").is_some() {
+        if std::env::var_os("POPARIUM_DB").is_some() {
             store::default_db()
         } else {
-            store::adopt_legacy_folder(&store::data_dir(), &store::legacy_dir())
+            store::adopt_legacy_folders()
         }
     });
     let store = match store::Store::open(&db) {
         Ok(store) => store,
         Err(error) => {
-            eprintln!("popos: no se pudo abrir la libreta {}: {error}", db.display());
+            eprintln!("poparium: no se pudo abrir la libreta {}: {error}", db.display());
             std::process::exit(1);
         }
     };
@@ -134,7 +134,7 @@ fn main() {
         match store.export() {
             Ok(out) => println!("{}", out.display()),
             Err(error) => {
-                eprintln!("popos: no se pudo exportar: {error}");
+                eprintln!("poparium: no se pudo exportar: {error}");
                 std::process::exit(1);
             }
         }
@@ -148,7 +148,7 @@ fn main() {
     let term = match ui::term::Term::start() {
         Ok(term) => term,
         Err(error) => {
-            eprintln!("popos: no se pudo preparar la terminal: {error}");
+            eprintln!("poparium: no se pudo preparar la terminal: {error}");
             std::process::exit(1);
         }
     };

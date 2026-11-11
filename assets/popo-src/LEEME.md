@@ -1,4 +1,4 @@
-# POPO.CACHE · Animaciones de popOS
+# POPO.CACHE · Animaciones de Poparium
 
 Siete animaciones reales de Popo, hechas a partir del sprite definitivo y listas para usar como recursos.
 
@@ -26,6 +26,6 @@ python3 popo_terminal.py coding
 
 Pulsa `Ctrl+C` para salir. Requiere una terminal UTF-8 que admita ANSI truecolor, de al menos 40 columnas y 22 filas. Usa caracteres de medio bloque `▀` para pintar dos píxeles por fila, sin protocolos gráficos especiales. Para integrarlo en una TUI basada en `curses`, puede adaptarse el bucle de fotogramas, pero no se debe incrustar este reproductor directamente dentro de una sesión `curses` activa: el control de pantalla entraría en conflicto.
 
-**Importante:** La versión 0.1 de popOS tiene un Popo ASCII 9×9 distinto. Este pack es una propuesta visual para una futura integración de estas animaciones; no cambia la app existente. 
+**Importante:** La versión 0.1 de Poparium tiene un Popo ASCII 9×9 distinto. Este pack es una propuesta visual para una futura integración de estas animaciones; no cambia la app existente. 
 
 **Filosofía:** Popo se alegra de los progresos y acompaña las dificultades sin enfadarse ni mostrar decepción; no contabiliza rachas negativas.

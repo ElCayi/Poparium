@@ -53,7 +53,7 @@ pub struct Spot {
 /// The ficha's Popo on screen: (y, x, belly, integrated, cols).
 pub type FichaPopo = (i32, i32, usize, bool, usize);
 
-/// popOS in the terminal. Each tab draws itself from its view (ui/views);
+/// Poparium in the terminal. Each tab draws itself from its view (ui/views);
 /// what the keys do lives in actions.rs, reading in reader.rs.
 pub struct App {
     pub term: Term,
@@ -259,7 +259,7 @@ impl App {
             "Q      Salir",
             "",
             "3      CALENDARIO: dentro, ←→↑↓ día, [ ] mes, T hoy",
-            "6      POPARIUM: los Popos de tus acuerdos, a su aire",
+            "6      PRADO: los Popos de tus acuerdos, a su aire",
             "",
             "Tu herramienta. Tu ritmo. Los acuerdos pueden revisarse.",
             "No es un sistema para que otra persona te supervise.",
@@ -331,7 +331,7 @@ impl App {
     fn main_loop(&mut self) {
         loop {
             self.draw();
-            let farm = self.tab == POPARIUM && self.popo.is_some();
+            let farm = self.tab == PRADO && self.popo.is_some();
             let mut key = None;
             while key.is_none() {
                 // Sleep until the next frame is due, or until a key: the farm

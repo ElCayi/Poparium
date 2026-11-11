@@ -37,14 +37,17 @@ pub fn logo_frame(now_ms: u64) -> (usize, u64) {
     (0, 1)
 }
 
-/// The name drawn in block letters, 8 px tall: "pop" in Popo's cream, "OS" in
-/// the app's cyan. Each letter: (color, 8 rows); "#" is a pixel.
-const WORDMARK: [(&str, [&str; 8]); 5] = [
-    ("cream", ["....", "....", "###.", "#..#", "#..#", "###.", "#...", "#..."]),
-    ("cream", ["....", "....", ".##.", "#..#", "#..#", ".##.", "....", "...."]),
-    ("cream", ["....", "....", "###.", "#..#", "#..#", "###.", "#...", "#..."]),
-    ("a", [".###.", "#...#", "#...#", "#...#", "#...#", ".###.", ".....", "....."]),
-    ("a", [".###", "#...", ".##.", "...#", "...#", "###.", "....", "...."]),
+/// The name drawn in block letters, 8 px tall: "popa" in Popo's cream, "rium"
+/// in the app's cyan. Each letter: (color, 8 rows); "#" is a pixel.
+const WORDMARK: [(&str, [&str; 8]); 8] = [
+    ("cream", ["...", "...", "##.", "#.#", "#.#", "##.", "#..", "#.."]),
+    ("cream", ["...", "...", ".#.", "#.#", "#.#", ".#.", "...", "..."]),
+    ("cream", ["...", "...", "##.", "#.#", "#.#", "##.", "#..", "#.."]),
+    ("cream", ["...", "...", "##.", ".##", "#.#", ".##", "...", "..."]),
+    ("a", ["...", "...", "#.#", "##.", "#..", "#..", "...", "..."]),
+    ("a", ["#", ".", "#", "#", "#", "#", ".", "."]),
+    ("a", ["...", "...", "#.#", "#.#", "#.#", ".##", "...", "..."]),
+    ("a", [".....", ".....", "##.#.", "#.#.#", "#.#.#", "#.#.#", ".....", "....."]),
 ];
 
 /// The wordmark as 4 rows of (char, color) half-block cells, one column gap between letters.
@@ -344,7 +347,7 @@ mod tests {
 }
 
 /// Against real Python: every PNG kitty gets, written out for comparison
-/// (`POPOS_PNG_DIR=dir cargo test -- --ignored`).
+/// (`POPARIUM_PNG_DIR=dir cargo test -- --ignored`).
 #[cfg(test)]
 mod against_python {
     use super::*;
@@ -352,7 +355,7 @@ mod against_python {
     #[test]
     #[ignore]
     fn write_every_png() {
-        let dir = std::path::PathBuf::from(std::env::var("POPOS_PNG_DIR").expect("POPOS_PNG_DIR"));
+        let dir = std::path::PathBuf::from(std::env::var("POPARIUM_PNG_DIR").expect("POPARIUM_PNG_DIR"));
         let rgba = load_popo().unwrap().logo_rgba.unwrap();
         for frame in 0..rgba.frames.len() {
             for (belly, factor) in BELLY.iter().enumerate() {

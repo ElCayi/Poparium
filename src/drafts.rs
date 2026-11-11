@@ -38,7 +38,7 @@ impl Drafts {
     }
 
     fn changed(&self) {
-        // No memory of the last value: another popOS (the popup and the popos
+        // No memory of the last value: another Poparium (the popup and the poparium
         // session at once) may have changed the folder meanwhile
         if let Some(on_change) = &self.on_change {
             on_change(self.unsaved());
@@ -120,7 +120,7 @@ mod tests {
     use std::rc::Rc;
 
     fn folder() -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("popos-drafts-{}-{:?}", std::process::id(), std::thread::current().id()));
+        let dir = std::env::temp_dir().join(format!("poparium-drafts-{}-{:?}", std::process::id(), std::thread::current().id()));
         let _ = fs::remove_dir_all(&dir);
         dir.join("store.drafts")
     }

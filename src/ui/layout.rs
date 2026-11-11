@@ -1,13 +1,13 @@
 //! Sizes, tabs and the key hints at the bottom.
 
-pub const TABS: [&str; 6] = ["OVERVIEW", "ACUERDOS", "CALENDARIO", "BITÁCORA", "REVIEW", "POPARIUM"];
+pub const TABS: [&str; 6] = ["OVERVIEW", "ACUERDOS", "CALENDARIO", "BITÁCORA", "REVIEW", "PRADO"];
 
 pub const OVERVIEW: usize = 0;
 pub const ACUERDOS: usize = 1;
 pub const CALENDARIO: usize = 2;
 pub const BITACORA: usize = 3;
 pub const REVIEW: usize = 4;
-pub const POPARIUM: usize = 5;
+pub const PRADO: usize = 5;
 
 /// Fallback when no editor is installed: one line per field
 pub const FIELDS: [(&str, &str, bool); 3] = [
@@ -19,15 +19,15 @@ pub const FIELDS: [(&str, &str, bool); 3] = [
 pub const JOURNAL_LIMIT: i64 = 200; // newest entries the BITÁCORA tab shows
 
 // Below SIDEBAR_W columns the sidebar folds into a tab row on top.
-// SIDE_W: the sidebar panels (whose inside fits the 25-column name) plus a gap
+// SIDE_W: the sidebar panels (whose inside fits the 31-column name) plus a gap
 pub const MIN_W: i32 = 50;
 pub const MIN_H: i32 = 20;
-pub const SIDEBAR_W: i32 = 86;
-pub const SIDE_W: i32 = 30;
+pub const SIDEBAR_W: i32 = 92;
+pub const SIDE_W: i32 = 36;
 
 /// Wider than this, the app stops stretching and sits centred: its longest
 /// lines (sidebar + the widest panel text) set the size, not the screen
-pub const MAX_W: i32 = 120;
+pub const MAX_W: i32 = 126;
 
 pub const MENU_HINTS: [&str; 3] = [
     "↑↓ menú  ENTER entrar  + añadir experiencia (D/P/B/I)  N nuevo acuerdo  ? ayuda",

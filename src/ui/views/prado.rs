@@ -1,4 +1,4 @@
-//! POPARIUM: the meadow where the Popos wander.
+//! PRADO: the meadow where the Popos wander.
 use crate::kitty::{KITTY_LOGO_IDS, farm_image_id, kitty_placeholder_row, kitty_upload};
 use crate::popo::{BELLY, FARM_POPO, FARM_TICK, STRETCH, growth, logo_frame, popo_look, popo_png, py_round};
 use crate::pyrandom::PyRandom;
@@ -16,11 +16,11 @@ impl App {
     pub fn render_farm(&mut self, top: i32, bottom: i32, left: i32, width: i32) {
         let edge = self.focus_edge(self.inside);
         let (y, x, ih, iw) =
-            self.panel(top, left, bottom - top + 1, width, "POPARIUM · los Popos andan a su aire", None, edge);
+            self.panel(top, left, bottom - top + 1, width, "PRADO · los Popos andan a su aire", None, edge);
         let items = self.current_items();
         if items.is_empty() {
             let dim = self.style("dim", false);
-            self.put(y, x, "El Poparium está vacío. Cada acuerdo nuevo (N) trae su Popo.", dim, Some(iw));
+            self.put(y, x, "El prado está vacío. Cada acuerdo nuevo (N) trae su Popo.", dim, Some(iw));
             return;
         }
         let counts = self.store.experience_counts().unwrap_or_default();

@@ -22,9 +22,9 @@ fn inside_tmux() -> bool {
 
 /// Whether the terminal at the far end is kitty, and tmux (if any) lets its escapes through.
 ///
-/// POPOS_GRAPHICS=0/1 overrides the guess.
+/// POPARIUM_GRAPHICS=0/1 overrides the guess.
 pub fn kitty_graphics() -> bool {
-    match std::env::var("POPOS_GRAPHICS").as_deref() {
+    match std::env::var("POPARIUM_GRAPHICS").as_deref() {
         Ok("0") => return false,
         Ok("1") => return true,
         _ => {}

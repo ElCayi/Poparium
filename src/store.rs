@@ -27,23 +27,20 @@ pub fn expand_user(path: &Path) -> PathBuf {
 }
 
 pub fn data_dir() -> PathBuf {
-    home().join(".local/share/popos")
+    home().join(".local/share/poparium")
 }
 
-/// POPOS_DB points to another notebook
+/// POPARIUM_DB points to another notebook
 pub fn default_db() -> PathBuf {
-    match std::env::var_os("POPOS_DB").filter(|v| !v.is_empty()) {
+    match std::env::var_os("POPARIUM_DB").filter(|v| !v.is_empty()) {
         Some(path) => expand_user(Path::new(&path)),
-        None => data_dir().join("popos.db"),
+        None => data_dir().join("poparium.db"),
     }
 }
 
-/// Where the notebook lived while the app was called keepstate
-pub fn legacy_dir() -> PathBuf {
-    home().join(".local/share/keepstate")
-}
-
-const LEGACY_STEM: &str = "keepstate";
+/// The app's earlier names, newest first: its notebook lived in
+/// ~/.local/share/<name>/<name>.db
+const LEGACY_NAMES: [&str; 2] = ["popos", "keepstate"];
 
 fn names_in(folder: &Path) -> Vec<String> {
     let mut names: Vec<String> = fs::read_dir(folder)
@@ -53,43 +50,56 @@ fn names_in(folder: &Path) -> Vec<String> {
     names
 }
 
-/// Moves the keepstate folder to popos/ and renames what's inside
-/// (keepstate.db, .backups, .drafts, .pre-0.x.db) to popos.*.
+/// Brings the notebook of any earlier name into the data folder (see
+/// adopt_legacy_folder). Returns the notebook to open.
+pub fn adopt_legacy_folders() -> PathBuf {
+    let new = data_dir();
+    for stem in LEGACY_NAMES {
+        let db = adopt_legacy_folder(&new, &home().join(".local/share").join(stem), stem);
+        if !db.starts_with(&new) {
+            return db;
+        }
+    }
+    new.join("poparium.db")
+}
+
+/// Moves the folder of an earlier name (popos/, keepstate/) to poparium/ and
+/// renames what's inside (<stem>.db, .backups, .drafts, .pre-0.x.db) to poparium.*.
 ///
 /// The folder moves in one rename, and the renames inside are repeated on
 /// every start until none is left, so an interruption at any point loses
 /// nothing. Left alone while the old notebook is mid-write (a -journal or
 /// -wal next to it): the app then opens it where it is, untouched.
-pub fn adopt_legacy_folder(new: &Path, old: &Path) -> PathBuf {
+pub fn adopt_legacy_folder(new: &Path, old: &Path, stem: &str) -> PathBuf {
     if !new.exists() && old.is_dir() {
-        if names_in(old).iter().any(|n| n.starts_with(&format!("{LEGACY_STEM}.db-"))) {
-            return old.join(format!("{LEGACY_STEM}.db"));
+        if names_in(old).iter().any(|n| n.starts_with(&format!("{stem}.db-"))) {
+            return old.join(format!("{stem}.db"));
         }
         let _ = fs::rename(old, new);
     }
     if !new.is_dir() {
-        return new.join("popos.db");
+        return new.join("poparium.db");
     }
     for name in names_in(new) {
-        if let Some(rest) = name.strip_prefix(&format!("{LEGACY_STEM}.")) {
-            let target = new.join(format!("popos.{rest}"));
+        if let Some(rest) = name.strip_prefix(&format!("{stem}.")) {
+            let target = new.join(format!("poparium.{rest}"));
             if !target.exists() {
                 let _ = fs::rename(new.join(&name), target);
             }
         }
     }
-    let backups = new.join("popos.backups");
+    let backups = new.join("poparium.backups");
     if backups.is_dir() {
         for name in names_in(&backups) {
-            if name.starts_with(&format!("{LEGACY_STEM}-")) && name.ends_with(".db") {
-                let target = backups.join(format!("popos{}", &name[LEGACY_STEM.len()..]));
+            if name.starts_with(&format!("{stem}-")) && name.ends_with(".db") {
+                let target = backups.join(format!("poparium{}", &name[stem.len()..]));
                 if !target.exists() {
                     let _ = fs::rename(backups.join(&name), target);
                 }
             }
         }
     }
-    new.join("popos.db")
+    new.join("poparium.db")
 }
 
 // Daily copies of the notebook: every day of the last two weeks, and the first
@@ -773,7 +783,7 @@ impl Store {
     /// A Markdown copy next to the notebook; returns where it went.
     pub fn export(&self) -> std::io::Result<PathBuf> {
         let folder = self.path.parent().map(Path::to_path_buf).unwrap_or_default();
-        let out = folder.join(format!("popos-export-{}.md", Local::now().format("%Y%m%d-%H%M%S")));
+        let out = folder.join(format!("poparium-export-{}.md", Local::now().format("%Y%m%d-%H%M%S")));
         let lines = self.export_lines().map_err(std::io::Error::other)?;
         let mut file = OpenOptions::new().create(true).write(true).truncate(true).mode(0o600).open(&out)?;
         std::io::Write::write_all(&mut file, lines.join("\n").as_bytes())?;
@@ -885,7 +895,7 @@ mod tests {
 
     impl Folder {
         fn new(name: &str) -> Folder {
-            let path = std::env::temp_dir().join(format!("popos-test-{}-{name}", std::process::id()));
+            let path = std::env::temp_dir().join(format!("poparium-test-{}-{name}", std::process::id()));
             let _ = fs::remove_dir_all(&path);
             fs::create_dir_all(&path).unwrap();
             Folder(path)
@@ -1199,31 +1209,45 @@ mod tests {
     }
 
     #[test]
-    fn keepstate_folder_becomes_popos() {
-        let folder = Folder::new("keepstate");
-        let (old, new) = (folder.0.join("keepstate"), folder.0.join("popos"));
-        fs::create_dir_all(old.join("keepstate.backups")).unwrap();
-        fs::create_dir_all(old.join("keepstate.drafts")).unwrap();
-        for name in ["keepstate.db", "keepstate.pre-0.3.db", "keepstate.backups/keepstate-2026-10-11.db", "keepstate.drafts/nuevo.md"] {
+    fn popos_folder_becomes_poparium() {
+        let folder = Folder::new("popos");
+        let (old, new) = (folder.0.join("popos"), folder.0.join("poparium"));
+        fs::create_dir_all(old.join("popos.backups")).unwrap();
+        fs::create_dir_all(old.join("popos.drafts")).unwrap();
+        for name in ["popos.db", "popos.pre-0.3.db", "popos.backups/popos-2026-10-11.db", "popos.drafts/nuevo.md"] {
             fs::write(old.join(name), name).unwrap();
         }
-        assert_eq!(adopt_legacy_folder(&new, &old), new.join("popos.db"));
+        assert_eq!(adopt_legacy_folder(&new, &old, "popos"), new.join("poparium.db"));
         assert!(!old.exists());
-        assert_eq!(fs::read_to_string(new.join("popos.db")).unwrap(), "keepstate.db");
-        assert!(new.join("popos.pre-0.3.db").exists());
-        assert!(new.join("popos.backups/popos-2026-10-11.db").exists());
-        assert!(new.join("popos.drafts/nuevo.md").exists());
-        assert_eq!(adopt_legacy_folder(&new, &old), new.join("popos.db")); // nothing left to do
+        assert_eq!(fs::read_to_string(new.join("poparium.db")).unwrap(), "popos.db");
+        assert!(new.join("poparium.pre-0.3.db").exists());
+        assert!(new.join("poparium.backups/poparium-2026-10-11.db").exists());
+        assert!(new.join("poparium.drafts/nuevo.md").exists());
+        assert_eq!(adopt_legacy_folder(&new, &old, "popos"), new.join("poparium.db")); // nothing left to do
     }
 
     #[test]
-    fn keepstate_folder_mid_write_stays_put() {
+    fn half_renamed_keepstate_files_finish_as_poparium() {
+        let folder = Folder::new("keepstate");
+        let new = folder.0.join("poparium");
+        fs::create_dir_all(new.join("poparium.backups")).unwrap();
+        for name in ["poparium.db", "keepstate.pre-0.2.db", "poparium.backups/keepstate-2026-10-01.db"] {
+            fs::write(new.join(name), name).unwrap();
+        }
+        assert_eq!(adopt_legacy_folder(&new, &folder.0.join("keepstate"), "keepstate"), new.join("poparium.db"));
+        assert_eq!(fs::read_to_string(new.join("poparium.db")).unwrap(), "poparium.db");
+        assert!(new.join("poparium.pre-0.2.db").exists());
+        assert!(new.join("poparium.backups/poparium-2026-10-01.db").exists());
+    }
+
+    #[test]
+    fn legacy_folder_mid_write_stays_put() {
         let folder = Folder::new("mid-write");
-        let (old, new) = (folder.0.join("keepstate"), folder.0.join("popos"));
+        let (old, new) = (folder.0.join("popos"), folder.0.join("poparium"));
         fs::create_dir_all(&old).unwrap();
-        fs::write(old.join("keepstate.db"), "db").unwrap();
-        fs::write(old.join("keepstate.db-journal"), "journal").unwrap();
-        assert_eq!(adopt_legacy_folder(&new, &old), old.join("keepstate.db"));
+        fs::write(old.join("popos.db"), "db").unwrap();
+        fs::write(old.join("popos.db-journal"), "journal").unwrap();
+        assert_eq!(adopt_legacy_folder(&new, &old, "popos"), old.join("popos.db"));
         assert!(!new.exists());
     }
 

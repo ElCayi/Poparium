@@ -1,6 +1,6 @@
-"""What popOS reproduces of Python itself (textwrap, difflib, random.Random), as
+"""What Poparium reproduces of Python itself (textwrap, difflib, random.Random), as
 real Python computes it: `python3 tests/python_cases.py [seed] > cases.json`,
-then `POPOS_PYCASES=cases.json cargo test -- --ignored`."""
+then `POPARIUM_PYCASES=cases.json cargo test -- --ignored`."""
 import difflib, json, random, sys, textwrap
 rng = random.Random(int(sys.argv[1]) if len(sys.argv) > 1 else 7)
 WORDS = ["hola", "que", "tal", "bien-estar", "auto-cuidado", "no", "x", "palabra--otra", "--", "-", "a-b",

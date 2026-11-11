@@ -2,6 +2,6 @@
 mod agreements;
 mod calendar;
 mod journal;
-mod poparium;
+mod prado;
 mod review;
 mod sidebar;

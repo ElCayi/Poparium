@@ -457,13 +457,13 @@ mod tests {
 }
 
 /// Against real Python: `python3 tests/python_cases.py > cases.json`, then
-/// `POPOS_PYCASES=cases.json cargo test -- --ignored`.
+/// `POPARIUM_PYCASES=cases.json cargo test -- --ignored`.
 #[cfg(test)]
 mod against_python {
     use super::*;
 
     fn cases() -> serde_json::Value {
-        let path = std::env::var("POPOS_PYCASES").expect("POPOS_PYCASES: the cases Python wrote");
+        let path = std::env::var("POPARIUM_PYCASES").expect("POPARIUM_PYCASES: the cases Python wrote");
         serde_json::from_str(&std::fs::read_to_string(path).expect("readable cases")).expect("json cases")
     }
 
