@@ -1,4 +1,4 @@
-# Poparium v0.1 · Personal Operating System
+# Poparium v0.1 · Memoria entre sesiones
 
 Una **bitácora de acuerdos, aprendizajes y progreso** de estética terminal, para usar dentro de **tmux**. Sin cuenta, sin nube y sin nadie más mirando.
 

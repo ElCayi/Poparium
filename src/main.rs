@@ -1,4 +1,4 @@
-//! Poparium · Personal Operating System: the `poparium` command.
+//! Poparium · Memoria entre sesiones: the `poparium` command.
 mod dates;
 mod document;
 mod drafts;
@@ -18,7 +18,7 @@ use std::path::PathBuf;
 
 pub const APP: &str = "Poparium";
 pub const VERSION: &str = "v0.1";
-pub const TAGLINE: &str = "Personal Operating System";
+pub const TAGLINE: &str = "Memoria entre sesiones";
 
 const USAGE: &str = "usage: poparium [-h] [--db DB] [--export] [--tmux-status] [--tmux-status-push]";
 

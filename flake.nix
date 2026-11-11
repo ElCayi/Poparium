@@ -1,5 +1,5 @@
 {
-  description = "Poparium v0.1 · Personal Operating System: libreta personal de acuerdos para tmux";
+  description = "Poparium v0.1 · Memoria entre sesiones: libreta personal de acuerdos para tmux";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 

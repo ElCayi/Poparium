@@ -1,7 +1,7 @@
 [package]
 name = "poparium"
 version = "0.1.0"
-description = "Poparium · Personal Operating System: libreta de acuerdos para tmux"
+description = "Poparium · Memoria entre sesiones: libreta de acuerdos para tmux"
 edition = "2024"
 
 [dependencies]
